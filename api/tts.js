@@ -1,4 +1,3 @@
-// api/tts.js
 const fetch = require('node-fetch');
 
 module.exports = async (req, res) => {
@@ -15,11 +14,18 @@ module.exports = async (req, res) => {
 
   const apiUrl = 'https://hailuo-free-api-hwl9.onrender.com/v1/audio/speech';
   
-  const keys = [
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjU3OTI5NjEsInVzZXIiOnsiaWQiOiIyNzQ2NDYzMjAzNTQxNTI0NTAiLCJuYW1lIjoi5bCP6J665bi9MjQ1MCIsImF2YXRhciI6Imh0dHBzOi8vY2RuLnlpbmdzaGktYWkuY29tL3Byb2QvdXNlcl9hdmF0YXIvMTcwNjI2NzU0NDM4OTgyMDgwMS0xNzMxOTQ1NzA2Njg5NjU4OTZvdmVyc2l6ZS5wbmciLCJkZXZpY2VJRCI6IjI3NDUyNjU4NDc3MzUyMTQxNCIsImlzQW5vbnltb3VzIjpmYWxzZX19.kNJ6a0sApshdI19qgVerkXCgD7YruV299-apG2nz43w',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjU3OTI3OTksInVzZXIiOnsiaWQiOiIyNTM0ODMyNTQ4MDc1Mjc0MjciLCJuYW1lIjoi5bCP6J665bi9NzQyNyIsImF2YXRhciI6Imh0dHBzOi8vY2RuLnlpbmdzaGktYWkuY29tL3Byb2QvdXNlcl9hdmF0YXIvMTcwNjI2NzU0NDM4OTgyMDgwMS0xNzMxOTQ1NzA2Njg5NjU4OTZvdmVyc2l6ZS5wbmciLCJkZXZpY2VJRCI6IjI1MzQ4MzI1NDU2NDI1Nzc5NiIsImlzQW5vbnltb3VzIjpmYWxzZX19.a42wq0TFN8bPqDkoeEfp8lHItNO65O-lCiZwHi2ezZo',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjU3OTIyNjgsInVzZXIiOnsiaWQiOiIyNzQ2NDM1NDcxMzA2NzkzMDAiLCJuYW1lIjoi5bCP6J665bi9OTMwMCIsImF2YXRhciI6Imh0dHBzOi8vY2RuLnlpbmdzaGktYWkuY29tL3Byb2QvdXNlcl9hdmF0YXIvMTcwNjI2NzM2NDE2NDQwNDA3Ny0xNzMxOTQ1NzA2Njg5NjU4OTZvdmVyc2l6ZS5wbmciLCJkZXZpY2VJRCI6IjI3NDY0MzI5MDM1OTU4NjgyNSIsImlzQW5vbnltb3VzIjpmYWxzZX19.dSgDyrV_qsREu8MLwNSHYlHpgPwwdEFdolOWfdc4bz0'
-  ];
+  const keys = [];
+  for (let i = 1; i <= 10; i++) {
+    const key = process.env[`KEY_${i}`];
+    if (key) {
+      keys.push(key);
+    }
+  }
+
+  if (keys.length === 0) {
+    console.error('No API keys found in environment variables');
+    return res.status(500).send('Server configuration error: No API keys available');
+  }
 
   const authorization = keys.join(',');
 
@@ -44,7 +50,7 @@ module.exports = async (req, res) => {
     }
 
     const audioData = await response.buffer();
-    const fileName = `audio_${Date.now()}.mp3`;  // 生成唯一的文件名
+    const fileName = `audio_${Date.now()}.mp3`;  // Generate a unique filename
     res.setHeader('Content-Type', 'audio/mpeg');
     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
     res.send(audioData);

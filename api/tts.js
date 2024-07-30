@@ -12,7 +12,11 @@ module.exports = async (req, res) => {
 
   console.log('Received text:', text);
 
-  const apiUrl = 'https://hailuo-free-api-hwl9.onrender.com/v1/audio/speech';
+  const apiUrl = process.env.API_URL;
+  if (!apiUrl) {
+    console.error('API_URL environment variable is not set');
+    return res.status(500).send('Server configuration error: API_URL is not set');
+  }
   
   const keys = [];
   for (let i = 1; i <= 10; i++) {
